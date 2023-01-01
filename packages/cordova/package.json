@@ -34,7 +34,8 @@
             "cordova-plugin-privacyscreen": {},
             "cordova-plugin-inappbrowser": {},
             "cordova-plugin-androidx-adapter": {},
-            "cordova-plugin-keyboard": {}
+            "cordova-plugin-keyboard": {},
+            "cordova-plugin-nativestorage": {}
         }
     },
     "dependencies": {
@@ -64,6 +65,7 @@
         "cordova": "11.0.0",
         "cordova-android": "10.1.2",
         "cordova-plugin-keyboard": "1.2.0",
+        "cordova-plugin-nativestorage": "^2.3.2",
         "css-loader": "5.2.6",
         "dotenv": "10.0.0",
         "file-loader": "6.2.0",

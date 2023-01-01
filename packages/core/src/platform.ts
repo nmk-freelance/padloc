@@ -77,6 +77,8 @@ export class StubBiometricKeyStore {
  * Generic interface for various platform APIs
  */
 export interface Platform {
+    sendToNativeStorage(ref: string, obj: any): Promise<void>;
+
     /** Copies the given `text` to the system clipboard */
     setClipboard(text: string): Promise<void>;
 
@@ -143,6 +145,12 @@ export class StubPlatform implements Platform {
     crypto = new StubCryptoProvider();
     storage: Storage = new MemoryStorage();
     biometricKeyStore = new StubBiometricKeyStore();
+
+    sendToNativeStorage(ref: string, obj: any): Promise<void> {
+        console.log(`lala not supported; ref: ${ref}`);
+        console.log(obj);
+        throw new Err(ErrorCode.NOT_SUPPORTED);
+    }
 
     get supportedAuthTypes(): AuthType[] {
         return [];
@@ -341,4 +349,8 @@ export function getPlatformAuthType() {
 
 export function openExternalUrl(url: string) {
     return platform.openExternalUrl(url);
+}
+
+export function sendToNativeStorage(ref: string, obj: any): Promise<void> {
+    return platform.sendToNativeStorage(ref, obj);
 }

@@ -34,7 +34,7 @@ import {
 } from "./api";
 import { Client } from "./client";
 import { Sender } from "./transport";
-import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage } from "./platform";
+import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage, sendToNativeStorage } from "./platform";
 import { uuid, throttle } from "./util";
 import { Client as SRPClient } from "./srp";
 import { Err, ErrorCode } from "./error";
@@ -484,6 +484,25 @@ export class App {
         }
 
         await this.storage.save(this.state);
+
+        await this.sendToNativeStorage();
+    }
+
+    private async sendToNativeStorage() {
+        if (!this.state.locked) {
+            console.info("lala saved to persistent storage");
+
+            let items = [];
+            for (let item of this.state.vaults.reduce((items, v) => [...items, ...v.items], [] as VaultItem[])) {
+                items.push(JSON.parse(item.toJSON()));
+            }
+            try {
+                await sendToNativeStorage("lala", items);
+                console.info("lala sent to native storage after saving to persistent storage");
+            } catch (e) {
+                console.error(`Lala: ${e}`);
+            }
+        }
     }
 
     /** Load application state from persistent storage */

@@ -13,8 +13,18 @@ declare var Fingerprint: any;
 declare var cordova: any;
 declare var device: any;
 declare var plugins: any;
+declare var NativeStorage: any;
 
 export class CordovaPlatform extends WebPlatform implements Platform {
+    sendToNativeStorage(ref: string, obj: any): Promise<void> {
+        console.info(`lala sending to native storage ref: ${ref}`);
+        console.info(obj);
+        return new Promise((resolve, reject) => {
+            NativeStorage.initWithSuiteName("group.app.padloc.autofill-ios");
+            NativeStorage.setItem(ref, obj, resolve, reject);
+        });
+    }
+
     get supportedAuthTypes() {
         return [AuthType.Email, AuthType.Totp, AuthType.PublicKey];
     }
