@@ -16,15 +16,6 @@ declare var plugins: any;
 declare var NativeStorage: any;
 
 export class CordovaPlatform extends WebPlatform implements Platform {
-    sendToNativeStorage(ref: string, obj: any): Promise<void> {
-        console.info(`lala sending to native storage ref: ${ref}`);
-        console.info(obj);
-        return new Promise((resolve, reject) => {
-            NativeStorage.initWithSuiteName("group.app.padloc.autofill-ios");
-            NativeStorage.setItem(ref, obj, resolve, reject);
-        });
-    }
-
     get supportedAuthTypes() {
         return [AuthType.Email, AuthType.Totp, AuthType.PublicKey];
     }
@@ -157,4 +148,31 @@ export class CordovaPlatform extends WebPlatform implements Platform {
     supportsPlatformAuthenticator() {
         return this.biometricKeyStore.isSupported();
     }
+
+    nativeStorage = {
+        setItem(ref: string, obj: any): Promise<void> {
+            console.info(`lala setting item in native storage ref: ${ref}`);
+            console.info(obj);
+            return new Promise((resolve, reject) => {
+                NativeStorage.initWithSuiteName("group.app.padloc.autofill-ios");
+                NativeStorage.setItem(ref, obj, resolve, reject);
+            });
+        },
+
+        remove(ref: string): Promise<void> {
+            console.info(`lala removing from native storage ref: ${ref}`);
+            return new Promise((resolve, reject) => {
+                NativeStorage.initWithSuiteName("group.app.padloc.autofill-ios");
+                NativeStorage.remove(ref, resolve, reject);
+            });
+        },
+
+        clear(): Promise<void> {
+            console.info("lala clearing native storage");
+            return new Promise((resolve, reject) => {
+                NativeStorage.initWithSuiteName("group.app.padloc.autofill-ios");
+                NativeStorage.clear(resolve, reject);
+            });
+        },
+    };
 }

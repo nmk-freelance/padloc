@@ -73,12 +73,28 @@ export class StubBiometricKeyStore {
     }
 }
 
+export interface NativeStorage {
+    setItem(ref: string, obj: any): Promise<void>;
+    remove(ref: string): Promise<void>;
+    clear(): Promise<void>;
+}
+
+export class StubNativeStorage implements NativeStorage {
+    setItem(_ref: string, _obj: any): Promise<void> {
+        throw new Err(ErrorCode.NOT_SUPPORTED);
+    }
+    remove(_ref: string): Promise<void> {
+        throw new Err(ErrorCode.NOT_SUPPORTED);
+    }
+    clear(): Promise<void> {
+        throw new Err(ErrorCode.NOT_SUPPORTED);
+    }
+}
+
 /**
  * Generic interface for various platform APIs
  */
 export interface Platform {
-    sendToNativeStorage(ref: string, obj: any): Promise<void>;
-
     /** Copies the given `text` to the system clipboard */
     setClipboard(text: string): Promise<void>;
 
@@ -93,6 +109,8 @@ export interface Platform {
     storage: Storage;
 
     biometricKeyStore: BiometricKeyStore;
+
+    nativeStorage: NativeStorage;
 
     scanQR(): Promise<string>;
     stopScanQR(): Promise<void>;
@@ -145,12 +163,7 @@ export class StubPlatform implements Platform {
     crypto = new StubCryptoProvider();
     storage: Storage = new MemoryStorage();
     biometricKeyStore = new StubBiometricKeyStore();
-
-    sendToNativeStorage(ref: string, obj: any): Promise<void> {
-        console.log(`lala not supported; ref: ${ref}`);
-        console.log(obj);
-        throw new Err(ErrorCode.NOT_SUPPORTED);
-    }
+    nativeStorage = new StubNativeStorage();
 
     get supportedAuthTypes(): AuthType[] {
         return [];
@@ -349,8 +362,4 @@ export function getPlatformAuthType() {
 
 export function openExternalUrl(url: string) {
     return platform.openExternalUrl(url);
-}
-
-export function sendToNativeStorage(ref: string, obj: any): Promise<void> {
-    return platform.sendToNativeStorage(ref, obj);
 }

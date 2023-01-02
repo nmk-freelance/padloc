@@ -34,7 +34,7 @@ import {
 } from "./api";
 import { Client } from "./client";
 import { Sender } from "./transport";
-import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage, sendToNativeStorage } from "./platform";
+import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage, getPlatform } from "./platform";
 import { uuid, throttle } from "./util";
 import { Client as SRPClient } from "./srp";
 import { Err, ErrorCode } from "./error";
@@ -485,22 +485,30 @@ export class App {
 
         await this.storage.save(this.state);
 
-        await this.sendToNativeStorage();
+        await this.syncWithNativeStorage();
     }
 
-    private async sendToNativeStorage() {
-        if (!this.state.locked) {
-            console.info("lala saved to persistent storage");
-
-            let items = [];
-            for (let item of this.state.vaults.reduce((items, v) => [...items, ...v.items], [] as VaultItem[])) {
-                items.push(JSON.parse(item.toJSON()));
-            }
-            try {
-                await sendToNativeStorage("lala", items);
-                console.info("lala sent to native storage after saving to persistent storage");
-            } catch (e) {
-                console.error(`Lala: ${e}`);
+    private async syncWithNativeStorage() {
+        let platform = await getPlatform();
+        if (platform.constructor.name === "CordovaPlatform" && (await platform.getDeviceInfo()).platform === "iOS") {
+            if (!this.state.locked) {
+                let items = [];
+                for (let item of this.state.vaults.reduce((items, v) => [...items, ...v.items], [] as VaultItem[])) {
+                    items.push(JSON.parse(item.toJSON()));
+                }
+                try {
+                    await getPlatform().nativeStorage.setItem("lala", items);
+                    console.info("lala sent to native storage after saving to persistent storage");
+                } catch (e) {
+                    console.error(`Lala: ${e}`);
+                }
+            } else if (!this.state.loggedIn) {
+                try {
+                    await getPlatform().nativeStorage.remove("lala");
+                    console.log("lala removed");
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
     }
