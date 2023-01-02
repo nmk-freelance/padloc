@@ -492,10 +492,9 @@ export class App {
         let platform = await getPlatform();
         if (platform.constructor.name === "CordovaPlatform" && (await platform.getDeviceInfo()).platform === "iOS") {
             if (!this.state.locked) {
-                let items = [];
-                for (let item of this.state.vaults.reduce((items, v) => [...items, ...v.items], [] as VaultItem[])) {
-                    items.push(JSON.parse(item.toJSON()));
-                }
+                let items = this.state.vaults
+                    .reduce((items, v) => [...items, ...v.items], [] as VaultItem[])
+                    .map((i) => i.toRaw());
                 try {
                     await getPlatform().nativeStorage.setItem("lala", items);
                     console.info("lala sent to native storage after saving to persistent storage");
