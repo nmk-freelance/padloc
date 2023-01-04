@@ -18,6 +18,7 @@ packages/electron/app
 packages/electron/dist
 /.env
 packages/pwa/dist
+packages/pwa-ios-autofill/dist
 packages/server/logs
 packages/server/data
 packages/server/attachments

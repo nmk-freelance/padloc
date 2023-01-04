@@ -30,6 +30,7 @@
         "postinstall": "lerna bootstrap",
         "bootstrap": "lerna bootstrap",
         "pwa:build": "lerna run build --scope @padloc/pwa",
+        "pwa-ios-autofill:build": "lerna run build --scope @padloc/pwa-ios-autofill",
         "pwa:start": "lerna run start --scope @padloc/pwa",
         "server:start": "lerna run start --scope @padloc/server --stream",
         "server:start-dry": "lerna run start-dry --stream --scope @padloc/server",
