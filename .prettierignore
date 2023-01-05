@@ -10,6 +10,7 @@ packages/tauri/dist/**/*
 packages/tauri/src-tauri/target/**/*
 packages/tauri/tauri-update.json
 packages/pwa/dist/**/*
+packages/pwa-ios-autofill/dist/**/*
 package-lock.json
 cypress/fixtures/**/*
 .flatpak-builder/**/*
