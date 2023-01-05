@@ -6,6 +6,7 @@ import { AuthType } from "@padloc/core/src/auth";
 import { PublicKeyAuthClient } from "@padloc/core/src/auth/public-key";
 import { StartRegisterAuthenticatorResponse, StartAuthRequestResponse } from "@padloc/core/src/api";
 import { appleDeviceNames } from "./apple-device-names";
+import { UserDefaultsStorage } from "./storage";
 
 const cordovaReady = new Promise((resolve) => document.addEventListener("deviceready", resolve));
 
@@ -15,6 +16,8 @@ declare var device: any;
 declare var plugins: any;
 
 export class CordovaPlatform extends WebPlatform implements Platform {
+    storage = new UserDefaultsStorage();
+
     get supportedAuthTypes() {
         return [AuthType.Email, AuthType.Totp, AuthType.PublicKey];
     }

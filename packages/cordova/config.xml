@@ -39,7 +39,7 @@
     </platform>
     <platform name="ios">
         <preference name="Fullscreen" value="true"/>
-        <preference name="deployment-target" value="11.0"/>
+        <preference name="deployment-target" value="14.0"/>
         <preference name="StatusBarStyle" value="default"/>
         <icon height="20" src="www/res/icons/ios/app-icon-20.png" width="20"/>
         <icon height="29" src="www/res/icons/ios/app-icon-29.png" width="29"/>
