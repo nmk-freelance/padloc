@@ -25,6 +25,8 @@ import { iconForAudit, noItemsTextForAudit, titleTextForAudit } from "../lib/aud
 import { singleton } from "../lib/singleton";
 import { NoteDialog } from "./note-dialog";
 import { ImportDialog } from "./import-dialog";
+import { getPlatform } from "@padloc/core/src/platform";
+import { NativeBridge } from "@padloc/pwa-ios-autofill/src/native-bridge";
 
 export interface ListItem {
     item: VaultItem;
@@ -553,6 +555,9 @@ export class ItemsList extends StateMixin(LitElement) {
     }
 
     selectItem(item: ListItem) {
+        if (getPlatform().constructor.name === "NativePlatform") {
+            NativeBridge.autofillSelected(item.item);
+        }
         if (this.multiSelect) {
             if (this._multiSelect.has(item.item.id)) {
                 this._multiSelect.delete(item.item.id);

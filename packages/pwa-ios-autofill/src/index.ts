@@ -1,9 +1,9 @@
 import { setPlatform } from "@padloc/core/src/platform";
-import { WebPlatform } from "@padloc/app/src/lib/platform";
+import { NativePlatform } from "./platform";
 
 if (window.location.search !== "?spinner") {
     (async () => {
-        setPlatform(new WebPlatform());
+        setPlatform(new NativePlatform());
 
         await import("@padloc/app/src/elements/app");
 
