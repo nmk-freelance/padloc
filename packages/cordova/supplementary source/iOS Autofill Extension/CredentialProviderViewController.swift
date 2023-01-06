@@ -20,7 +20,7 @@ class CredentialProviderViewController: ASCredentialProviderViewController {
     */
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         Self.current = self
-        webView.load(URLRequest(url: URL(string: "\(Config.urlScheme)://good/")!))
+        webView.load(URLRequest(url: URL(string: "\(Config.urlScheme)://localhost/")!))
         view.addSubview(webView)
         webView.frame = view.bounds
         webView.autoresizingMask = [.flexibleWidth, .flexibleHeight, .flexibleLeftMargin, .flexibleRightMargin, .flexibleTopMargin, .flexibleBottomMargin]
