@@ -24,7 +24,7 @@ import "./invite-recipient";
 import "./report";
 import "./support";
 import "./menu";
-import { registerPlatformAuthenticator, supportsPlatformAuthenticator } from "@padloc/core/src/platform";
+import { getPlatform, registerPlatformAuthenticator, supportsPlatformAuthenticator } from "@padloc/core/src/platform";
 import { AuthPurpose } from "@padloc/core/src/auth";
 import { ProvisioningStatus } from "@padloc/core/src/provisioning";
 import "./rich-content";
@@ -33,6 +33,7 @@ import { ItemsView } from "./items";
 import { wait, throttle } from "@padloc/core/src/util";
 import { auditVaults } from "../lib/audit";
 import { stringToBase64 } from "@padloc/core/src/encoding";
+import { NativeBridge } from "@padloc/pwa-ios-autofill/src/native-bridge";
 
 @customElement("pl-app")
 export class App extends ServiceWorker(StateMixin(AutoSync(ErrorHandling(AutoLock(Routing(LitElement)))))) {
@@ -324,6 +325,11 @@ export class App extends ServiceWorker(StateMixin(AutoSync(ErrorHandling(AutoLoc
                       </div>
                   `
                 : ""}
+            ${getPlatform().constructor.name === "NativePlatform" && this.router.path.match(/^(start|login|unlock)/)
+                ? html`<pl-button class="transparent slim" @click=${() => NativeBridge.cancelAutofill()}>
+                      <div>${$l("Cancel")}</div>
+                  </pl-button>`
+                : html``}
 
             <div class="main">
                 <pl-start id="startView" active></pl-start>

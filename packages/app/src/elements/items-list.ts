@@ -759,6 +759,12 @@ export class ItemsList extends StateMixin(LitElement) {
                     </div>
                 </pl-button>
 
+                ${getPlatform().constructor.name === "NativePlatform"
+                    ? html`<pl-button class="transparent slim" @click=${() => NativeBridge.cancelAutofill()}>
+                          <div>${$l("Cancel")}</div>
+                      </pl-button>`
+                    : ""}
+
                 <div class="horizontal layout">
                     <pl-button class="slim transparent" @click=${() => (this.multiSelect = true)}>
                         <pl-icon icon="list-check"></pl-icon>
