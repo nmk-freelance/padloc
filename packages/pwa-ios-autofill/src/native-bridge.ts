@@ -23,12 +23,12 @@ export class NativeBridge {
         return webkit.messageHandlers[ScriptMessageName.userDefaultsRemove].postMessage(key);
     }
     static userDefaultsClear(): Promise<void> {
-        return webkit.messageHandlers[ScriptMessageName.userDefaultsClear].postMessage();
+        return webkit.messageHandlers[ScriptMessageName.userDefaultsClear].postMessage(null);
     }
 
     // Autofill Provider Extension
     static cancelAutofill(): Promise<void> {
-        return webkit.messageHandlers[ScriptMessageName.cancelAutofill].postMessage();
+        return webkit.messageHandlers[ScriptMessageName.cancelAutofill].postMessage(null);
     }
 
     static autofillSelected(vaultItem: VaultItem): Promise<void> {
