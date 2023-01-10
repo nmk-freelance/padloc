@@ -13,8 +13,14 @@ let nativeBridgeContentController: WKUserContentController = {
     controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.userDefaultsSetString.rawValue)
     controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.userDefaultsRemove.rawValue)
     controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.userDefaultsClear.rawValue)
+
     controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.cancelAutofill.rawValue)
     controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.autofillSelected.rawValue)
+
+    controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.localAuthAvailable.rawValue)
+    controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.localAuthAdd.rawValue)
+    controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.localAuthLoad.rawValue)
+    controller.addScriptMessageHandler(Handler.shared, contentWorld: .page, name: ScriptMessageName.localAuthDelete.rawValue)
     return controller
 }()
 

@@ -36,11 +36,52 @@ class Handler: NSObject, WKScriptMessageHandlerWithReply {
 
         case ScriptMessageName.cancelAutofill.rawValue:
             CredentialProviderViewController.current.cancel()
+            replyHandler(NSNull(), nil)
         case ScriptMessageName.autofillSelected.rawValue:
             let dict = message.body as! [String: String]
             let username = dict["username"]!
             let password = dict["password"]!
             CredentialProviderViewController.current.passwordSelected(passwordCredential: ASPasswordCredential(user: username, password: password))
+            replyHandler(NSNull(), nil)
+
+        case ScriptMessageName.localAuthAvailable.rawValue:
+            replyHandler(LocalAuth.available, nil)
+        case ScriptMessageName.localAuthAdd.rawValue:
+            let dict = message.body as! [String: String]
+            let id = dict["id"]!
+            let key = dict["key"]!
+            do {
+                try LocalAuth.add(id: id, key: key)
+                replyHandler(NSNull(), nil)
+            } catch {
+                if let error = error as? LocalAuth.StoreError {
+                    replyHandler(NSNull(), error.localizedDescription)
+                } else {
+                    replyHandler(NSNull(), error.localizedDescription)
+                }
+            }
+        case ScriptMessageName.localAuthLoad.rawValue:
+            do {
+                let result = try LocalAuth.load(id: message.body as! String)
+                replyHandler(result, nil)
+            } catch {
+                if let error = error as? LocalAuth.StoreError {
+                    replyHandler(NSNull(), error.localizedDescription)
+                } else {
+                    replyHandler(NSNull(), error.localizedDescription)
+                }
+            }
+        case ScriptMessageName.localAuthDelete.rawValue:
+            do {
+                try LocalAuth.delete(id: message.body as! String)
+                replyHandler(NSNull(), nil)
+            } catch {
+                if let error = error as? LocalAuth.StoreError {
+                    replyHandler(NSNull(), error.localizedDescription)
+                } else {
+                    replyHandler(NSNull(), error.localizedDescription)
+                }
+            }
         default:
             fatalError()
         }
@@ -55,4 +96,9 @@ enum ScriptMessageName: String {
 
     case cancelAutofill
     case autofillSelected
+
+    case localAuthAvailable
+    case localAuthAdd
+    case localAuthLoad
+    case localAuthDelete
 }

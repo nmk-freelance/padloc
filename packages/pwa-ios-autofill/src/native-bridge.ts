@@ -9,6 +9,10 @@ enum ScriptMessageName {
     userDefaultsClear = "userDefaultsClear",
     cancelAutofill = "cancelAutofill",
     autofillSelected = "autofillSelected",
+    localAuthAvailable = "localAuthAvailable",
+    localAuthAdd = "localAuthAdd",
+    localAuthLoad = "localAuthLoad",
+    localAuthDelete = "localAuthDelete",
 }
 
 export class NativeBridge {
@@ -38,5 +42,22 @@ export class NativeBridge {
             username: usernames.length > 0 ? usernames[0].value : "",
             password: passwords.length > 0 ? passwords[0].value : "",
         });
+    }
+
+    // Local Authentication
+    static localAuthAvailable(): Promise<boolean> {
+        return webkit.messageHandlers[ScriptMessageName.localAuthAvailable].postMessage(null);
+    }
+
+    static localAuthAdd(id: string, key: string): Promise<void> {
+        return webkit.messageHandlers[ScriptMessageName.localAuthAdd].postMessage({ id: id, key: key });
+    }
+
+    static localAuthLoad(id: string): Promise<string> {
+        return webkit.messageHandlers[ScriptMessageName.localAuthLoad].postMessage(id);
+    }
+
+    static localAuthDelete(id: string): Promise<void> {
+        return webkit.messageHandlers[ScriptMessageName.localAuthDelete].postMessage(id);
     }
 }
