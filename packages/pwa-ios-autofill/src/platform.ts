@@ -28,16 +28,16 @@ export class NativePlatform extends WebPlatform implements Platform {
             return NativeBridge.localAuthAvailable();
         },
 
-        async storeKey(id: string, key: Uint8Array) {
+        async storeKey(_id: string, key: Uint8Array) {
             try {
-                await NativeBridge.localAuthDelete(id);
+                await NativeBridge.localAuthDelete("__aio_key");
             } finally {
-                return NativeBridge.localAuthAdd(id, bytesToBase64(key));
+                return NativeBridge.localAuthAdd("__aio_key", bytesToBase64(key));
             }
         },
 
-        async getKey(id: string) {
-            let base64Key = await NativeBridge.localAuthLoad(id);
+        async getKey(_id: string) {
+            let base64Key = await NativeBridge.localAuthLoad("__aio_key");
             return base64ToBytes(base64Key);
         },
     };

@@ -10,6 +10,7 @@ import LocalAuthentication
 
 struct LocalAuth {
     static private let access = SecAccessControlCreateWithFlags(nil,kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly, .biometryCurrentSet, nil)
+    static let accessGroup = "group.local.app.padloc"
 
     struct StoreError: Error {
         var localizedDescription: String
@@ -29,6 +30,7 @@ struct LocalAuth {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccessControl as String: access as Any,
                                     kSecAttrAccount as String: id,
+                                    kSecAttrAccessGroup as String: accessGroup,
                                     kSecValueData as String: key.data(using: .utf8)!]
         let status = SecItemAdd(query as CFDictionary, nil)
         guard status == errSecSuccess else {
@@ -40,6 +42,7 @@ struct LocalAuth {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccessControl as String: access as Any,
                                     kSecAttrAccount as String: id,
+                                    kSecAttrAccessGroup as String: accessGroup,
                                     kSecReturnData as String: true,
                                     kSecMatchLimit as String: 1]
         var result: CFTypeRef?
@@ -56,6 +59,7 @@ struct LocalAuth {
     static func delete(id: String) throws {
         let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword,
                                     kSecAttrAccessControl as String: access as Any,
+                                    kSecAttrAccessGroup as String: accessGroup,
                                     kSecAttrAccount as String: id]
         let status = SecItemDelete(query as CFDictionary)
         guard status == errSecSuccess else {
