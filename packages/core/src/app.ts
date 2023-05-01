@@ -13,9 +13,10 @@ import {
     AuditResult,
     ItemHistoryEntry,
     ITEM_HISTORY_ENTRIES_LIMIT,
+    TagInfo,
 } from "./item";
 import { Account, AccountID, UnlockedAccount } from "./account";
-import { Auth } from "./auth";
+import { Auth, AuthPurpose, AuthType } from "./auth";
 import { Session, SessionID } from "./session";
 import {
     API,
@@ -31,10 +32,11 @@ import {
     CompleteCreateSessionParams,
     StartCreateSessionParams,
     StartCreateSessionResponse,
+    ChangeEmailParams,
 } from "./api";
 import { Client } from "./client";
 import { Sender } from "./transport";
-import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage } from "./platform";
+import { DeviceInfo, getDeviceInfo, getCryptoProvider, getStorage, authenticate } from "./platform";
 import { uuid, throttle } from "./util";
 import { Client as SRPClient } from "./srp";
 import { Err, ErrorCode } from "./error";
@@ -256,25 +258,6 @@ export class AppState extends Storable {
 
     _errors: Err[] = [];
 
-    /** All [[Tag]]s found within the users [[Vault]]s */
-    get tags() {
-        const tags = new Map<string, number>();
-
-        for (const vault of this.vaults) {
-            for (const item of vault.items) {
-                for (const tag of item.tags) {
-                    if (!tags.has(tag)) {
-                        tags.set(tag, 0);
-                    }
-
-                    tags.set(tag, tags.get(tag)! + 1);
-                }
-            }
-        }
-
-        return [...tags.entries()].sort(([, countA], [, countB]) => countB - countA);
-    }
-
     /** Whether the app is in "locked" state */
     get locked() {
         return !this.account || this.account.locked;
@@ -465,6 +448,43 @@ export class App {
         }
 
         return count;
+    }
+
+    /** All [[Tag]]s found within the users [[Vault]]s */
+    get tags(): TagInfo[] {
+        const tagNames = new Map<string, { count: number; readonly: number }>();
+
+        for (const vault of this.state.vaults) {
+            const editable = this.isEditable(vault);
+            for (const item of vault.items) {
+                for (const tag of item.tags) {
+                    if (!tagNames.has(tag)) {
+                        tagNames.set(tag, { count: 0, readonly: 0 });
+                    }
+
+                    tagNames.get(tag)!.count++;
+
+                    if (!editable) {
+                        tagNames.get(tag)!.readonly++;
+                    }
+                }
+            }
+        }
+
+        const sortedTagnames = [...tagNames.entries()].sort(([, a], [, b]) => b.count - a.count);
+        const tags = this.account?.tags ? [...this.account.tags] : [];
+
+        for (const [name, { count, readonly }] of sortedTagnames) {
+            let tagInfo = tags.find((t) => t.name === name);
+            if (!tagInfo) {
+                tagInfo = { name };
+                tags.push(tagInfo);
+            }
+            tagInfo.count = count;
+            tagInfo.readonly = readonly;
+        }
+
+        return tags;
     }
 
     private _queuedSyncPromises = new Map<string, Promise<void>>();
@@ -794,6 +814,24 @@ export class App {
         await this.forgetMasterKey();
     }
 
+    async changeEmail(email: string) {
+        if (!this.account) {
+            throw "You must be logged in to change your email!";
+        }
+
+        const { token } = await authenticate({ email, type: AuthType.Email, purpose: AuthPurpose.ChangeEmail });
+
+        const account = await this.api.changeEmail(new ChangeEmailParams({ authToken: token, email }));
+
+        account.copySecrets(this.account);
+
+        // Update and save state
+        this.setState({ account });
+        await this.save();
+
+        await this.fetchOrgs();
+    }
+
     /**
      * Fetches the users [[Account]] info from the [[Server]]
      */
@@ -834,6 +872,7 @@ export class App {
         // Create a clone of the current account to prevent inconsistencies in
         // case something goes wrong.
         let account = this.account.clone();
+        const masterKey = account.masterKey;
 
         // Apply changes
         await transform(account);
@@ -852,9 +891,9 @@ export class App {
             }
         }
 
-        // Copy over secret properties so we don't have to unlock the
-        // account object again.
-        account.copySecrets(this.account!);
+        if (masterKey) {
+            await account.unlockWithMasterKey(masterKey);
+        }
 
         // Update and save state
         this.setState({ account });
@@ -1543,7 +1582,9 @@ export class App {
             auditResults?: AuditResult[];
             lastAudited?: Date;
             expiresAfter?: number;
-        }
+        },
+        save = true,
+        sync = true
     ) {
         const { vault } = this.getItem(item.id)!;
         const newItem = new VaultItem({
@@ -1561,8 +1602,12 @@ export class App {
         }
 
         vault.items.update(newItem);
-        await this.saveVault(vault);
-        await this.syncVault(vault);
+        if (save) {
+            await this.saveVault(vault);
+            if (sync) {
+                await this.syncVault(vault);
+            }
+        }
     }
 
     async toggleFavorite(id: VaultItemID, favorite: boolean) {
@@ -1657,6 +1702,65 @@ export class App {
         }
     }
 
+    getTagInfo(name: Tag): TagInfo {
+        return this.tags.find((t) => t.name === name) || { name };
+    }
+
+    async deleteTag(tag: Tag) {
+        const changedVaults = new Set<Vault>();
+
+        for (const vault of this.vaults) {
+            if (!this.isEditable(vault)) {
+                continue;
+            }
+            for (const item of vault.items) {
+                if (item.tags.includes(tag)) {
+                    this.updateItem(item, { tags: item.tags.filter((t) => t !== tag) }, false, false);
+                    changedVaults.add(vault);
+                }
+            }
+        }
+
+        for (const vault of changedVaults) {
+            await this.saveVault(vault);
+            await this.syncVault(vault);
+        }
+
+        await this.updateAccount(async (account) => {
+            account.tags = account.tags.filter((t) => t.name !== tag);
+            await account.commitSecrets();
+        });
+    }
+
+    async renameTag(tag: Tag, newName: string) {
+        const changedVaults = new Set<Vault>();
+
+        for (const vault of this.vaults) {
+            if (!this.isEditable(vault)) {
+                continue;
+            }
+            for (const item of vault.items) {
+                if (item.tags.includes(tag)) {
+                    this.updateItem(item, { tags: [...item.tags.filter((t) => t !== tag), newName] }, false, false);
+                    changedVaults.add(vault);
+                }
+            }
+        }
+
+        for (const vault of changedVaults) {
+            await this.saveVault(vault);
+            await this.syncVault(vault);
+        }
+
+        await this.updateAccount(async (account) => {
+            const existing = account.tags.find((t) => t.name === tag);
+            if (existing) {
+                existing.name = newName;
+            }
+            await account.commitSecrets();
+        });
+    }
+
     /*
      * =========================
      *  ORGANIZATION MANAGEMENT
@@ -1714,8 +1818,28 @@ export class App {
             throw new Err(ErrorCode.VERIFICATION_ERROR, "'minMemberUpdated' property may not decrease!");
         }
 
-        if (this.account && !this.account.locked && org.isOwner(this.account) && !org.publicKey) {
-            await org.initialize(this.account);
+        const account = this.account;
+
+        if (account && !account.locked && org.isOwner(account) && !org.publicKey) {
+            await org.initialize(account);
+            org = await this.api.updateOrg(org);
+        }
+
+        // If for whatever reason (like changing the email address), an org
+        // owner gets suspended from their own org, we can simply unsuspend
+        // them.
+        if (account && org.isOwner(account) && org.isSuspended(account)) {
+            await org.unlock(account as UnlockedAccount);
+            // Unsuspend self
+            await org.addOrUpdateMember({
+                accountId: account.id,
+                email: account.email,
+                name: account.name,
+                publicKey: account.publicKey,
+                orgSignature: await account.signOrg({ id: org.id, publicKey: org.publicKey! }),
+                role: OrgRole.Owner,
+                status: OrgMemberStatus.Active,
+            });
             org = await this.api.updateOrg(org);
         }
 

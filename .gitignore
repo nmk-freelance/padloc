@@ -17,6 +17,7 @@ packages/electron/build
 packages/electron/app
 packages/electron/dist
 /.env
+packages/server/.env
 packages/pwa/dist
 packages/pwa-ios-autofill/dist
 packages/server/logs
@@ -31,3 +32,4 @@ packages/tauri/src-tauri/icons
 packages/tauri/tauri-update.json
 .flatpak-builder
 packages/admin/dist
+.DS_Store

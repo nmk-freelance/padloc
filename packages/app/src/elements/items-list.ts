@@ -1,4 +1,4 @@
-import { VaultItem, Field, Tag, AuditType, FieldType } from "@padloc/core/src/item";
+import { VaultItem, Field, Tag, TagInfo, AuditType, FieldType } from "@padloc/core/src/item";
 import { Vault, VaultID } from "@padloc/core/src/vault";
 import { translate as $l } from "@padloc/locale/src/translate";
 import { debounce, wait, escapeRegex, truncate } from "@padloc/core/src/util";
@@ -54,7 +54,9 @@ function filterByString(fs: string, rec: VaultItem) {
     const content = [rec.name, ...rec.tags, ...rec.fields.map((f) => f.name), ...rec.fields.map((f) => f.value)]
         .join(" ")
         .toLowerCase();
-    return content.search(escapeRegex(fs.toLowerCase())) !== -1;
+    const searchTerms = escapeRegex(fs.toLowerCase()).split(" ").filter(Boolean);
+
+    return searchTerms.every((searchTerm) => content.includes(searchTerm));
 }
 
 @customElement("pl-vault-item-list-item")
@@ -303,7 +305,7 @@ export class VaultItemListItem extends LitElement {
 
     render() {
         const { item, vault, warning } = this;
-        const tags = [];
+        const tags: Array<TagInfo & { icon: string; class: string }> = [];
 
         // const name = vault.getLabel();
 
@@ -314,8 +316,8 @@ export class VaultItemListItem extends LitElement {
         if (item.tags.length) {
             tags.push({
                 icon: "tag",
-                name: item.tags[0],
                 class: "",
+                ...app.getTagInfo(item.tags[0]),
             });
 
             if (item.tags.length > 1) {
@@ -363,7 +365,10 @@ export class VaultItemListItem extends LitElement {
 
                 ${tags.map(
                     (tag) => html`
-                        <div class="tiny tag ${tag.class} ellipsis" style="align-self: start">
+                        <div
+                            class="tiny tag ${tag.class} ellipsis"
+                            style="align-self: start; color: ${tag.color || "inherit"}"
+                        >
                             ${tag.icon ? html`<pl-icon icon="${tag.icon}" class="inline"></pl-icon>` : ""}
                             ${tag.name ? html`${tag.name}` : ""}
                         </div>
@@ -545,13 +550,13 @@ export class ItemsList extends StateMixin(LitElement) {
     }
 
     cancelSearch() {
+        this._filterInput?.blur();
+        this._filterShowing = false;
         if (this._filterInput?.value) {
             this._filterInput.value = "";
             this._updateFilterParam();
             this._updateItems();
         }
-        this._filterShowing = false;
-        this._filterInput?.blur();
     }
 
     selectItem(item: ListItem) {
@@ -800,7 +805,7 @@ export class ItemsList extends StateMixin(LitElement) {
                 >
                     <pl-icon slot="before" class="left-margined left-padded subtle small" icon="search"></pl-icon>
 
-                    <pl-button slot="after" class="slim transparent" @click=${() => this.cancelSearch()}>
+                    <pl-button slot="after" class="slim transparent" @mousedown=${() => this.cancelSearch()}>
                         <pl-icon icon="cancel"></pl-icon>
                     </pl-button>
                 </pl-input>

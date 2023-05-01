@@ -160,6 +160,10 @@
     "已複製到剪貼簿"
   ],
   [
+    "More",
+    "更多"
+  ],
+  [
     "Please enter at least one email address!",
     "請輸入至少一個Email地址！"
   ],
@@ -444,7 +448,7 @@
     "寫入權限"
   ],
   [
-    "Allow Edititing",
+    "Allow Editing",
     "允許編輯"
   ],
   [
@@ -1144,10 +1148,6 @@
     "此成員目前不屬於任何團隊"
   ],
   [
-    "Allow Editing",
-    "允許編輯"
-  ],
-  [
     "Via Groups",
     "透過團隊"
   ],
@@ -1200,8 +1200,8 @@
     "新密碼庫"
   ],
   [
-    "You don't have any tags yet.",
-    "您目前沒有任何標籤。"
+    "Manage Tags",
+    ""
   ],
   [
     "Orgs & Teams",
@@ -1210,10 +1210,6 @@
   [
     "New Organization",
     "新團隊"
-  ],
-  [
-    "More",
-    "更多"
   ],
   [
     "Security Report",
@@ -1502,6 +1498,22 @@
   [
     "Insert Horizontal Line",
     "插入垂直線"
+  ],
+  [
+    "Are you sure you want to change your email address to {0}? Please enter your master password to continue.",
+    ""
+  ],
+  [
+    "WARNING: You'll be suspended from any organizations you're not an owner of and will lose access to any shared vaults of that organization until the organization owner unsuspends you.",
+    ""
+  ],
+  [
+    "Change Email Address",
+    ""
+  ],
+  [
+    "Your email address has been changed successfully!",
+    ""
   ],
   [
     "Do you really want to log out?",
@@ -1824,6 +1836,54 @@
     "之後"
   ],
   [
+    "Please enter the new tag name.",
+    ""
+  ],
+  [
+    "Rename Tag",
+    ""
+  ],
+  [
+    "Create Tag",
+    ""
+  ],
+  [
+    "Are you sure you want to delete this tag? This will remove it from all vault items.",
+    ""
+  ],
+  [
+    "Delete Tag",
+    ""
+  ],
+  [
+    "You don't have any tags yet.",
+    "您目前沒有任何標籤。"
+  ],
+  [
+    "Rename",
+    ""
+  ],
+  [
+    "Unlist",
+    ""
+  ],
+  [
+    "Unlisted",
+    ""
+  ],
+  [
+    "Unlisted tags still show up on vault items but are hidden from the main menu and from suggestions.",
+    ""
+  ],
+  [
+    "You don't have any unlisted tags.",
+    ""
+  ],
+  [
+    "Remove From Unlisted",
+    ""
+  ],
+  [
     "Tools",
     "工具"
   ],
@@ -2108,7 +2168,7 @@
     "您的帳戶已被暫停，您不再能使用此服務。如果您覺得此暫停是個錯誤，請聯絡您的服務管理員或客戶支援。"
   ],
   [
-    "You don't currently have permission to use this service. Please contact the service adminstrator to request access.",
+    "You don't currently have permission to use this service. Please contact the service administrator to request access.",
     "您目前沒有權限使用此服務。請聯絡服務管理員以請求存取權。"
   ],
   [

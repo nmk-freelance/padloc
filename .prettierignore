@@ -16,3 +16,4 @@ cypress/fixtures/**/*
 .flatpak-builder/**/*
 packages/locale/res/**/*
 packages/admin/dist/**/*
+purekeep/assets/email/**/*
