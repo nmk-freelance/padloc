@@ -17,7 +17,7 @@ Run the following steps. PL_SERVER_URL may be set.
 
 ```
 npm ci
-PL_PWA_DISABLE_CSP=true npm run pwa-ios-autofill:build
+npm run pwa-ios-autofill:build
 npm run cordova:build:ios
 ```
 

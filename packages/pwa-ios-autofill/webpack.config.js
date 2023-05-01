@@ -16,7 +16,7 @@ const out = process.env.PL_PWA_DIR || resolve(__dirname, "dist");
 const serverUrl = removeTrailingSlash(
     process.env.PL_SERVER_URL || `http://0.0.0.0:${process.env.PL_SERVER_PORT || 3000}`
 );
-const pwaUrl = removeTrailingSlash(process.env.PL_PWA_URL || `http://localhost:${process.env.PL_PWA_PORT || 8080}`);
+const pwaUrl = removeTrailingSlash(process.env.PL_PWA_URL || 'autofill://localhost');
 const rootDir = resolve(__dirname, "../..");
 const assetsDir = resolve(rootDir, process.env.PL_ASSETS_DIR || "assets");
 const disableCsp = process.env.PL_PWA_DISABLE_CSP === "true";
