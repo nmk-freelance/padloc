@@ -1,0 +1,9 @@
+{
+  "name": "autofill_target_ios",
+  "version": "1.0.0",
+  "description": "Cordova plugin to add iOS autofill extension.",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Nay Min Ko"
+}

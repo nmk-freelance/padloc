@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
+        id="cordova-plugin-autofill_target_ios" version="0.2.3">
+    <name>Device</name>
+    <description>Cordova Autofill Target iOS Plugin</description>
+    <keywords>cordova,autofill</keywords>
+    <platform name="ios">
+        <hook type="after_prepare" src="add_autofill_target.js" />
+    </platform>
+</plugin>
