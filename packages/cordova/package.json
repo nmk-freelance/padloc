@@ -82,8 +82,9 @@
         "xml-js": "1.6.11"
     },
     "scripts": {
+        "install-autofill-plugin": "JSON=$(cat package.json) && sed -I '' -E '/@padloc\\/(app|core)/d' package.json && pwd && cordova plugin add 'supplementary source/cordova_plugin/Autofill_target_iOS' --link && printf %s \"$JSON\" > package.json",
         "patch-ios": "sed -i '' s/UIApplication\\.openSettingsURLString/UIApplicationOpenSettingsURLString/g ./plugins/cordova-plugin-qrscanner/src/ios/QRScanner.swift ./platforms/ios/Padloc/Plugins/cordova-plugin-qrscanner/QRScanner.swift",
-        "prepare-build": "webpack && node ./update-config-xml.js && cordova prepare",
+        "prepare-build": "webpack && node ./update-config-xml.js && cordova prepare; npm run install-autofill-plugin && cordova prepare",
         "start:android": "npm run prepare-build && cordova run android",
         "start:ios": "npm run prepare-build && npm run patch-ios && cordova run ios",
         "build": "npm run prepare-build && cordova build",
