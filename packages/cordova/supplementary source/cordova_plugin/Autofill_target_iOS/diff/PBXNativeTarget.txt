@@ -1,0 +1,17 @@
+		63E4AB572A08DBFD00C29FAA /* Autofill */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 63E4AB662A08DBFE00C29FAA /* Build configuration list for PBXNativeTarget "Autofill" */;
+			buildPhases = (
+				63E4AB542A08DBFD00C29FAA /* Sources */,
+				63E4AB552A08DBFD00C29FAA /* Frameworks */,
+				63E4AB562A08DBFD00C29FAA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Autofill;
+			productName = Autofill;
+			productReference = 63E4AB582A08DBFE00C29FAA /* Autofill.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};

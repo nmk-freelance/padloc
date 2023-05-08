@@ -1,0 +1,18 @@
+		63E4AB5B2A08DBFE00C29FAA /* Autofill */ = {
+			isa = PBXGroup;
+			children = (
+				63E4AB782A08DC3000C29FAA /* dist */,
+				63E4AB702A08DC2100C29FAA /* Config.swift */,
+				63E4AB6B2A08DC2000C29FAA /* CredentialProviderViewController.swift */,
+				63E4AB6E2A08DC2100C29FAA /* Handler.swift */,
+				63E4AB6F2A08DC2100C29FAA /* LocalAuth.swift */,
+				63E4AB6A2A08DC2000C29FAA /* RouteConverter.swift */,
+				63E4AB6C2A08DC2000C29FAA /* WebView.swift */,
+				63E4AB6D2A08DC2100C29FAA /* WebViewAssetHandler.swift */,
+				63E4AB5E2A08DBFE00C29FAA /* MainInterface.storyboard */,
+				63E4AB612A08DBFE00C29FAA /* Info.plist */,
+				63E4AB622A08DBFE00C29FAA /* Autofill.entitlements */,
+			);
+			path = Autofill;
+			sourceTree = "<group>";
+		};

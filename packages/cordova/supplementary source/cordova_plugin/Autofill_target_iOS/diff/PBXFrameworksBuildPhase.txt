@@ -1,0 +1,8 @@
+		63E4AB552A08DBFD00C29FAA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63E4AB5A2A08DBFE00C29FAA /* AuthenticationServices.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
