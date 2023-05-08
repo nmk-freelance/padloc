@@ -1,0 +1,9 @@
+		63E4AB662A08DBFE00C29FAA /* Build configuration list for PBXNativeTarget "Autofill" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				63E4AB672A08DBFE00C29FAA /* Debug */,
+				63E4AB682A08DBFE00C29FAA /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};

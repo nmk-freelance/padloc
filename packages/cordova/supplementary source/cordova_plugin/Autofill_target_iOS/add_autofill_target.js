@@ -1,53 +1,41 @@
 const fs = require('fs');
 const path = require('path');
-const xcode = require('xcode');
-const process = require('process');
+const { execFileSync } = require('child_process');
 
 module.exports = function(context) {
     console.log(context);
     let cordovaRoot = context.opts.projectRoot;
     let projectRoot = path.join(cordovaRoot, 'platforms/ios');
     let pluginRoot = context.opts.plugin.dir;
-    let resRoot = path.join(pluginRoot, 'res');
-    let resourceDir = path.join(pluginRoot, 'res');
     let projectFile = path.join(cordovaRoot, 'platforms/ios/Padloc.xcodeproj/project.pbxproj');
+    let patchScript = path.join(cordovaRoot, 'supplementary source/cordova_plugin/Autofill_target_iOS/patch.sh');
+    let diffRoot = path.join(cordovaRoot, 'supplementary source/cordova_plugin/Autofill_target_iOS/diff');
 
-    let xcodeProject = xcode.project(projectFile);
-    xcodeProject.parseSync();
+    // check
+    let projectData = fs.readFileSync(projectFile).toString();
+    let targetUuid = '63E4AB572A08DBFD00C29FAA';
+    if (projectData.includes(targetUuid)) {
+        console.log('Extension ready');
+        return;
+    }
+    console.log('Setting up extension');
 
-    /// # add target #
-    let targetName = 'Autofill';
-    let target = xcodeProject.addTarget(targetName, 'app_extension');
-    console.log(target);
-
-    /// update plist path
-    let infoPlistPath = path.join(resRoot, 'Info.plist');
-    xcodeProject.updateBuildProperty('INFOPLIST_FILE', infoPlistPath, null, target.pbxNativeTarget.name);
-
-    let phase = xcodeProject.addBuildPhase(
-        ['AuthenticationServices.framework'],
-        'PBXFrameworksBuildPhase',
-        'AuthenticationServices.framework',
-        target.uuid
-    );
-    console.log(phase);
-
-    // create group
+    // create group folder
     let groupName = 'Autofill';
     let autofillGroupPath = path.join(projectRoot, groupName)
     if (!fs.existsSync(autofillGroupPath)) {
         fs.mkdirSync(path.join(projectRoot, groupName));
     }
-    let theGroup = xcodeProject.addPbxGroup([], groupName, groupName);
 
-    // add to group CustomTemplate
-    let customTemplate = xcodeProject.pbxGroupByName('CustomTemplate');
-    let customTemplateGroupKey = xcodeProject.findPBXGroupKey({name: 'CustomTemplate'}, 'PBXGroup');
-    xcodeProject.addToPbxGroup(theGroup.uuid, customTemplateGroupKey);
+    // copy entitlements files
+    let padlocFolder = path.join(projectRoot, 'Padloc');
+    let resRoot = path.join(pluginRoot, 'res');
+    
+    for (file of ['Entitlements-Debug.plist', 'Entitlements-Release.plist']) {
+        fs.copyFileSync(path.join(resRoot, file), path.join(padlocFolder, file));
+    }
 
-    // add files to the group
-    xcodeProject.addFile(path.join(resRoot, 'Autofill.entitlements'), theGroup.uuid);
-    xcodeProject.addFile(path.join(resRoot, 'Info.plist'), theGroup.uuid);
-
-    fs.writeFileSync(projectFile, xcodeProject.writeSync());
+    // patch project
+    let out = execFileSync(patchScript, [projectFile, diffRoot]);
+    fs.writeFileSync(projectFile, out);
 }

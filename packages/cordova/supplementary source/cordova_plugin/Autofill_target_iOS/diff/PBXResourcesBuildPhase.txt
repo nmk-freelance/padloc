@@ -1,0 +1,9 @@
+		63E4AB562A08DBFD00C29FAA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63E4AB792A08DC3000C29FAA /* dist in Resources */,
+				63E4AB602A08DBFE00C29FAA /* MainInterface.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};

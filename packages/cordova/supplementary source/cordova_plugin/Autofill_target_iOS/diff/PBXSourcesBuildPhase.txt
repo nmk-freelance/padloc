@@ -1,0 +1,14 @@
+		63E4AB542A08DBFD00C29FAA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				63E4AB732A08DC2100C29FAA /* WebView.swift in Sources */,
+				63E4AB722A08DC2100C29FAA /* CredentialProviderViewController.swift in Sources */,
+				63E4AB712A08DC2100C29FAA /* RouteConverter.swift in Sources */,
+				63E4AB772A08DC2100C29FAA /* Config.swift in Sources */,
+				63E4AB752A08DC2100C29FAA /* Handler.swift in Sources */,
+				63E4AB742A08DC2100C29FAA /* WebViewAssetHandler.swift in Sources */,
+				63E4AB762A08DC2100C29FAA /* LocalAuth.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
