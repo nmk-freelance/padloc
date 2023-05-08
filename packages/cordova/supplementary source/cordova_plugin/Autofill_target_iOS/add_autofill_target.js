@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const { execFileSync } = require('child_process');
+const { execSync, execFileSync } = require('child_process');
 
 module.exports = function(context) {
     console.log(context);
@@ -10,6 +10,8 @@ module.exports = function(context) {
     let projectFile = path.join(cordovaRoot, 'platforms/ios/Padloc.xcodeproj/project.pbxproj');
     let patchScript = path.join(cordovaRoot, 'supplementary source/cordova_plugin/Autofill_target_iOS/patch.sh');
     let diffRoot = path.join(cordovaRoot, 'supplementary source/cordova_plugin/Autofill_target_iOS/diff');
+    let patchFile = path.join(cordovaRoot, 'supplementary source/Patch/Plugins/Fingerprint.swift.patch');
+    let fingerprintFile = path.join(projectRoot, 'Padloc/Plugins/cordova-plugin-fingerprint-aio/Fingerprint.swift');
 
     // check
     let projectData = fs.readFileSync(projectFile).toString();
@@ -38,4 +40,7 @@ module.exports = function(context) {
     // patch project
     let out = execFileSync(patchScript, [projectFile, diffRoot]);
     fs.writeFileSync(projectFile, out);
+
+    // patch fingerprint
+    execSync(`patch "${fingerprintFile}" "${patchFile}"`);
 }
