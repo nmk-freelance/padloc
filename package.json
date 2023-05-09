@@ -43,7 +43,7 @@
         "cordova:build": "lerna run build:android && lerna run build:ios",
         "cordova:build:android": "lerna run build:android",
         "cordova:build:android:signed": "lerna run build:android:signed",
-        "cordova:build:ios": "lerna run build:ios",
+        "cordova:build:ios": "npm run pwa-ios-autofill:build && lerna run build:ios",
         "cordova:build:ios:signed": "lerna run build:ios:signed",
         "start": "npm run pwa:build && lerna run --scope '@padloc/{server,pwa}' --parallel start",
         "start:v3": "http-server cypress/fixtures/v3-client -s -p 8081 --proxy http://0.0.0.0:8081?",
